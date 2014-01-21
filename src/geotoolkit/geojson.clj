@@ -1,5 +1,6 @@
 (ns geotoolkit.geojson
-  (:require [clojure.data.json :as json]))
+  (:require [clojure.data.json :as json]
+            [ring.util.response :as response]))
 
 
 (defn- dump-coordinate [^com.vividsolutions.jts.geom.Coordinate c]
@@ -58,3 +59,16 @@
         (assoc :features (map #(dump-feature % geomkey) v)))
       (dump-feature v geomkey)) 
     jsonoptions))
+
+(defn ring-geojson-response [features geom-key req-params]
+  (let [json (to-geojson features geom-key)
+        resp (response/status {} 200)
+        callback (get req-params "callback")]
+    (if (nil? callback)
+      (-> resp
+          (response/content-type "application/json")
+          (assoc :body json))
+      (-> resp
+          (response/content-type "application/javascript")
+          (assoc :body (str callback "(" json "};")))
+          )))
