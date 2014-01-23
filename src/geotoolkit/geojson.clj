@@ -70,5 +70,5 @@
           (assoc :body json))
       (-> resp
           (response/content-type "application/javascript")
-          (assoc :body (str callback "(" json "};")))
+          (assoc :body (str callback "(" json ");")))
           )))
