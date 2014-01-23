@@ -51,14 +51,15 @@
       (assoc :geometry (dump-jts-geometry (get m geomkey)))
       (assoc :properties (dissoc m geomkey))))
 
+
+(defn to-geojson-structure [v geomkey]
+  (if (seq? v)
+    (-> {:type "FeatureCollection"}
+      (assoc :features (map #(dump-feature % geomkey) v)))
+    (dump-feature v geomkey)) )
+
 (defn to-geojson [v geomkey & jsonoptions]
-  (apply json/write-str 
-  ;(apply json/pprint
-    (if (seq? v)
-      (-> {:type "FeatureCollection"}
-        (assoc :features (map #(dump-feature % geomkey) v)))
-      (dump-feature v geomkey)) 
-    jsonoptions))
+  (apply json/write-str (to-geojson-structure v geomkey) jsonoptions))
 
 (defn ring-geojson-response [features geom-key req-params]
   (let [json (to-geojson features geom-key)
