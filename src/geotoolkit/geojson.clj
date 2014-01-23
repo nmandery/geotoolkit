@@ -38,7 +38,7 @@
     "MultiPolygon" (dump-jts-multi dump-jts-polygon geom)
     (throw (java.lang.IllegalArgumentException. (str "can not dump geometry type " (.getGeometryType geom))))))
 
-(defn- dump-jts-geometry [^com.vividsolutions.jts.geom.Geometry geom]
+(defn dump-jts-geometry [^com.vividsolutions.jts.geom.Geometry geom]
   (when (not (nil? geom))
     (let [geometry {:type (.getGeometryType geom)}]
       (if (instance? com.vividsolutions.jts.geom.GeometryCollection geom)
