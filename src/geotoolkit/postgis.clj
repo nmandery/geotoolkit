@@ -5,11 +5,9 @@
 (defn- update-values [m f & args]
  (reduce (fn [r [k v]] (assoc r k (apply f v args))) {} m))
 
-(defn- to-jts-geometry-with-reader [^WKBReader wkbreader value] 
-  (if (instance? org.postgresql.util.PGobject value)
-    (if (= (.getType value) "geometry")
-      (. wkbreader (read (. WKBReader (hexToBytes (.getValue value)))))
-      value)
+(defn- to-jts-geometry-with-reader [^WKBReader wkbreader ^org.postgresql.util.PGobject value] 
+  (if (= (.getType value) "geometry")
+    (. wkbreader (read (. WKBReader (hexToBytes (.getValue value)))))
     value))
 
 (defn to-jts-geometry [value] 

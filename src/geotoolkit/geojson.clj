@@ -9,15 +9,12 @@
       (conj pt (.z c))
       pt)))
 
-(defn- dump-jts-polygon [^com.vividsolutions.jts.geom.Geometry poly]
-  (if (instance? com.vividsolutions.jts.geom.Polygon poly)
-    (let [ext-ring (map dump-coordinate (.getCoordinates (.getExteriorRing poly)))
-          n-rings (.getNumInteriorRing poly)]
-      (if (> n-rings 0)
-        (concat [ext-ring] (map (fn [n] (map dump-coordinate (.getCoordinates (.getInteriorRingN poly n)))) (range 0 n-rings)))
-        [ext-ring])
-    )
-    (throw (java.lang.IllegalArgumentException. "Polygon instance required"))))
+(defn- dump-jts-polygon [^com.vividsolutions.jts.geom.Polygon poly]
+  (let [ext-ring (map dump-coordinate (.getCoordinates (.getExteriorRing poly)))
+        n-rings (.getNumInteriorRing poly)]
+    (if (> n-rings 0)
+      (concat [ext-ring] (map (fn [n] (map dump-coordinate (.getCoordinates (.getInteriorRingN poly n)))) (range 0 n-rings)))
+      [ext-ring])))
 
 (defn- dump-jts-point [^com.vividsolutions.jts.geom.Geometry geom]
    (dump-coordinate (first (.getCoordinates geom))))
