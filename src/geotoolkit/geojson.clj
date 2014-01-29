@@ -50,16 +50,22 @@
 
 
 (defn to-geojson-structure [v geomkey]
+  "convert a featurecollection or feature with jts geometries to a
+   clojure structure build like an geojson"
   (if (seq? v)
     (-> {:type "FeatureCollection"}
       (assoc :features (map #(dump-feature % geomkey) v)))
     (dump-feature v geomkey)) )
 
 (defn to-geojson [v geomkey & jsonoptions]
+  "convert a featurecollection or feature with jts geometries to a
+  geojson string"
   (apply json/write-str (to-geojson-structure v geomkey) jsonoptions))
 
-(defn ring-geojson-response [features geom-key req-params]
-  (let [json (to-geojson features geom-key)
+(defn ring-geojson-response [structure req-params]
+  "return a featurecollection/feature clojure structure as geojson
+  from a ring handler"
+  (let [json (json/write-str structure)
         resp (response/status {} 200)
         callback (get req-params "callback")]
     (if (nil? callback)
@@ -70,3 +76,8 @@
           (response/content-type "application/javascript")
           (assoc :body (str callback "(" json ");")))
           )))
+
+(defn ring-jts-geojson-response [features geom-key req-params]
+  "return a featurecollection/feature with JTS geometries as geojson
+  from a ring handler"
+  (ring-geojson-response (to-geojson-structure features geom-key)))
