@@ -20,4 +20,7 @@
   "convert all convertible PostGIS values in the resultset to JTS geometries"
   (let [wkbreader (WKBReader.)] 
     (map
-      (fn [row] (update-values row #(to-jts-geometry-with-reader wkbreader %))) resultset)))
+      (fn [row] (update-values row #(if (instance? org.postgresql.util.PGobject %)
+                                      (to-jts-geometry-with-reader wkbreader %)
+                                      %)))
+      resultset)))
