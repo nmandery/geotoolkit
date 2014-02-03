@@ -10,9 +10,10 @@
 
 (def CoordinateListLevel1 [Coordinate])
 (def CoordinateListLevel2 [CoordinateListLevel1])
+(def CoordinateListLevel3 [CoordinateListLevel2])
 
 (def CoordinateList 
-  (s/either CoordinateListLevel1 CoordinateListLevel2))
+  (s/either CoordinateListLevel1 CoordinateListLevel2 CoordinateListLevel3))
 
 (def BoundingBox 
   (s/both
@@ -35,25 +36,26 @@
     s/Str
     (s/pred 
       (fn [x] (some #(= x %) 
-        ["Point" "Polygon" "LineString"]))
-      "has non-multi geometry type"))
+        ["Point" "Polygon" "LineString"
+        "MultiPoint" "MultiPolygon" "MultiLineString"]))
+      "has geometry type"))
   :coordinates (s/either Coordinate CoordinateList)
   (s/optional-key :crs) CoordinateReferenceSystem
 })
 
-(def MultiGeometry {
+(def GeometryCollection {
   :type (s/both
     s/Str
     (s/pred 
       (fn [x] (some #(= x %) 
-        ["MultiPoint" "MultiPolygon" "MultiLineString" "GeometryCollection"]))
-      "has multigeometry type"))
+        [ "GeometryCollection"]))
+      "has geometrycollection type"))
   :geometries [Geometry]
   (s/optional-key :crs) CoordinateReferenceSystem
 })
 
 (def Feature { 
-  :geometry (s/either Geometry MultiGeometry)
+  :geometry (s/either Geometry GeometryCollection)
   :properties {
     (s/either s/Str s/Keyword) s/Any
   }
