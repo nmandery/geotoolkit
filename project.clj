@@ -1,4 +1,4 @@
-(defproject geotoolkit "0.1.1"
+(defproject geotoolkit "0.1.2"
   :description "A Clojure library designed to work with PostGIS, GeoJSON and related stuff."
   :url "https://github.com/nmandery/geotoolkit"
   :license {:name "Eclipse Public License"

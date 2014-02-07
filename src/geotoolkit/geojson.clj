@@ -62,8 +62,8 @@
   geojson string"
   (apply json/write-str (to-geojson-structure v geomkey) jsonoptions))
 
-(defn ring-geojson-response [structure req-params]
-  "return a featurecollection/feature clojure structure as geojson
+(defn ring-json-response [structure req-params]
+  "return a clojure structure as json/json-p response
   from a ring handler"
   (let [json (json/write-str structure)
         resp (response/status {} 200)
@@ -80,4 +80,4 @@
 (defn ring-jts-geojson-response [features geom-key req-params]
   "return a featurecollection/feature with JTS geometries as geojson
   from a ring handler"
-  (ring-geojson-response (to-geojson-structure features geom-key)))
+  (ring-json-response (to-geojson-structure features geom-key)))
